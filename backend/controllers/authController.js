@@ -45,8 +45,8 @@ export const verifyEmail = async (req,res) => {
     const { code } = req.body;
     try {
         const user = await User.findone({
-            verificationToken: code;
-            verificationTokenExpiresAt: {$gt: Date.now()}
+            verificationToken: code,
+            verificationTokenExpiresAt: {$gt: Date.now()},
         })
         if(!user){
             return res.status(400).json({success: false, message: "Invalid oe expired verificatin code "})
