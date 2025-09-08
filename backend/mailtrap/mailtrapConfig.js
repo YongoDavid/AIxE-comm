@@ -1,33 +1,19 @@
-import {MailtrapClient}  from "mailtrap";
+import { MailtrapClient } from "mailtrap";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
-dotenv.config({ path: "../.env" });
+// Define __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const TOKEN = process.env.MAILTRAP_TOKEN;
-const ENDPOINT = process.env.MAILTRAP_ENDPOINT;
+// Use an absolute path to the .env file
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-export const mailtrapClient = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
+export const mailtrapClient = new MailtrapClient({ endpoint: process.env.MAILTRAP_ENDPOINT, token: process.env.MAILTRAP_TOKEN });
 
 // Replace email with brand email
 export const sender = {
     email: "hello@demomailtrap.co",
-    name: "Mailtrap Test",
+    name: "Dave",
 };
-
-const recipients = [
-    {
-        email: "davidyongo9@gmail.com"
-    }
-];
-
-mailtrapClient
-    .send({
-        from: sender,
-        to: recipients,
-        subject: "You are awesome!",
-        html: "congrats for sendingg test email with Mailtrap",
-        category: "Integration test"
-    })
-    .then(console.log, console.error);
-
-// MAKE SURE TO TEST MAIL TRAP CONFIG WITH (node mailtrapConfig.js)
