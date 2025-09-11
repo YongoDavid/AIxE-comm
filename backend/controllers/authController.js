@@ -1,8 +1,9 @@
 import bycryptjs from 'bcryptjs';
-import { User }  from "../models/userModel.js";
+import crypto from "crypto";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import { sendVerificationEmail } from "../mailtrap/emails.js";
 import { sendWelcomeEmail } from '../mailtrap/emails.js';
+import { User }  from "../models/userModel.js";
 
 export const Signup = async (req,res)=> {
     const {email, password, name} = req.body;
@@ -29,9 +30,10 @@ export const Signup = async (req,res)=> {
         await user.save();
 
         //JWT
-        generateTokenAndSetCookie(res,user._id);
+        generateTokenAndSetCookie(res, user._id);
 
         await sendVerificationEmail(user.email, verificationToken);
+        
         res.status(201).json({
             success: true,
             message: "User created successfully",
@@ -48,7 +50,7 @@ export const Signup = async (req,res)=> {
 export const verifyEmail = async (req,res) => {
     const { code } = req.body;
     try {
-        const user = await User.findone({
+        const user = await User.findOne({
             verificationToken: code,
             verificationTokenExpiresAt: {$gt: Date.now()},
         })
@@ -56,11 +58,12 @@ export const verifyEmail = async (req,res) => {
             return res.status(400).json({success: false, message: "Invalid or expired verification code"})
         }
         user.isVerified = true;
-        user.verifcationToken = undefined;
+        user.verificationToken = undefined;
         user.verificationTokenExpiresAt = undefined;
         await user.save()
          
         await sendWelcomeEmail(user.email, user.name);
+
         res.status(200).json({
 			success: true,
 			message: "Email verified successfully",
@@ -69,10 +72,7 @@ export const verifyEmail = async (req,res) => {
 				password: undefined,
 			},
 		});
-    } catch (error)  {
-        // console.log("error in verifyEmail ", error);
-		// res.status(500).json({ success: false, message: "Server error" });
-    }
+    } catch (error)  {}
 }  
 
 export const Login = async (req,res)=> {

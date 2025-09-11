@@ -6,6 +6,6 @@ router.post("/signup",Signup);
 router.post("/login", Login);
 router.post("/logout",LogOut);
 
-router.post("/verfiy-email", verifyEmail);
+router.post("/verify-email", verifyEmail);
 
 export default router;  
