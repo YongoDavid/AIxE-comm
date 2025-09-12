@@ -1,9 +1,9 @@
 import bycryptjs from 'bcryptjs';
 import crypto from "crypto";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
-import { sendVerificationEmail } from "../mailtrap/emails.js";
-import { sendWelcomeEmail } from '../mailtrap/emails.js';
+import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail} from "../mailtrap/emails.js";
 import { User }  from "../models/userModel.js";
+import bcrypt from 'bcryptjs';
 
 export const Signup = async (req,res)=> {
     const {email, password, name} = req.body;
@@ -72,13 +72,67 @@ export const verifyEmail = async (req,res) => {
 				password: undefined,
 			},
 		});
-    } catch (error)  {}
-}  
+    } catch (error)  {
+        console.log("error in verifyEmail",error);
+        res.status(500).json({success: false, message: "Server error"});
+    }
+};
 
 export const Login = async (req,res)=> {
-    res.send("login route")
+    const {email, password} = req.body;
+    try {
+        const user = await User.findOne({email});
+        if(!user){
+            return res.status(400).json({success: false, message: "Invalid credentials" });
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if(!isPasswordValid){
+            return res.status(400).json({success: false, message: "Invalid credentials"});
+        }
+
+        generateTokenAndSetCookie(res, user._id);
+
+        user.lastLogin = new Date();
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Logged in succesfully",
+            user: {
+                ...user._doc,
+                password: undefined,
+            },
+        });
+    } catch (error) {
+        
+    }
 };
 
-export const LogOut = async (req,res)=> {
-    res.send("logout route")
+export const Logout = async (req,res)=> {
+    res.clearCookie("token");
+	res.status(200).json({ success: true, message: "Logged out successfully" });
 };
+
+export const forgotPassword = async (req,res) => {
+    const {email} = req.body;
+    try {
+        const user = await User.findOne({email});
+        if(!user){ 
+            return res.status(400).json({sucess: false, message: "User not found"});
+        }
+
+        // Generate reset token 
+        const resetToken = crypto.randomBytes(20).toString("hex");
+        const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
+
+        user.resetPasswordToken = resetToken;
+        user.resetTokenExpiresAt = resetTokenExpiresAt;
+
+        await user.save();
+        // send email 
+        await sendPasswordResetEmail(user.email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`);
+        res.status(200).json({ succes: true, message: "Password reset link sent to your email"})
+    } catch (error) {
+        res.status(400).json({success: false, message: error.message});
+    }
+}
