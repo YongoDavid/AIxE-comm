@@ -1,11 +1,11 @@
 import bycryptjs from 'bcryptjs';
 import crypto from "crypto";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
-import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail} from "../mailtrap/emails.js";
+import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail} from "../mailtrap/emails.js";
 import { User }  from "../models/userModel.js";
 import bcrypt from 'bcryptjs';
 
-export const Signup = async (req,res)=> {
+export const Signup = async (req,res)=> { 
     const {email, password, name} = req.body;
     try {
          if(!email || !password || !name){
@@ -14,7 +14,7 @@ export const Signup = async (req,res)=> {
         const userAlreadyExists = await User.findOne({ email });
         console.log("userAlreadyExists", userAlreadyExists);
         if(userAlreadyExists){
-            return res.status(400).json({success:false, message: "User already exits"});
+            return res.status(400).json({success:false, message: "This User already exits"});
         } 
 
         const hashedPassword = await bycryptjs.hash(password, 10);
@@ -43,7 +43,7 @@ export const Signup = async (req,res)=> {
             }
         }); 
     } catch (error) {
-        res.status(400).json({success: false, message:error.message});
+        res.status(400).json({success: false, message: error.message});
     }
 };
 
@@ -136,3 +136,47 @@ export const forgotPassword = async (req,res) => {
         res.status(400).json({success: false, message: error.message});
     }
 }
+
+export const resetPassword = async (req, res) => {
+    try {
+        const {token} = req.params;
+        const {password} = req.body;
+
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpiresAt: { $gt: Date.now()}
+        });
+
+        if(!user){
+            return res.status(400).json({sucess: false, message: "Invalid or expired reset token"});
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        user.password = hashedPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpiresAt = undefined;
+        await user.save();
+
+        await sendResetSuccessEmail(user.email);
+
+        res.status(200).json({success: true, message: "Password reset succesful"});
+    } catch (error) {
+        console.log("Error in resetPassword", error);
+        res.status(400).json({success: false, message: error.message});
+    }
+}
+
+export const checkAuth = async (req,res) =>{
+    try {
+        const user = await User.findById(req.userId).select("-password");
+        if(!user){
+            return res.status(400).json({success: false, message: "User not found"});
+        }
+        res.status(200).json({success: true, user});
+    } catch (error) {
+        console.log("Error in checkAuth", error);
+        res.status(400).json({success: false, message: error.message});
+    }
+}
+

@@ -1,18 +1,17 @@
 import express from "express";
 import dotenv from "dotenv";
-import authRoutes from "./routes/authroute.js";
+import cookieParser from "cookie-parser";
+
 import { connectDB } from "./db/connectDB.js"; 
+import authRoutes from "./routes/authRoute.js";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.get('/', (req, res) => {
-  res.send('Is this the marix')
-});
- 
 // Access request body
-app.use(express.json());
+app.use(express.json());// Access request body
+app.use(cookieParser()); // Allows to parse incoming cookies 
 
 app.use("/api/auth", authRoutes)
 
