@@ -1,4 +1,3 @@
-
 export default function Input({ icon: Icon, ...props }) {
   return (
     <div className='relative mb-6'>
