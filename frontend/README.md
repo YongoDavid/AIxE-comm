@@ -73,5 +73,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 SEP 19
 I STOPPED AT signup page (motion button)
 
-OCT 03
-Stopped at passsword strrength meterr
+OCT 7
+Continue at Login page 
+2:28:44
