@@ -1,7 +1,24 @@
-import React from 'react'
+import {create} from "zustand"; 
+import axios from "axios";
 
-export default function authStore() {
-  return (
-    <div>authStore</div>
-  )
-};
+const API_URL = "https://localhost:500/api/auth";
+
+axios.defaults.withCredentials = true;
+export const useAuthStore = create((set) => ({
+  user: null,
+  isAuthenticated: false,
+  error: null,
+  isLoading: false,
+  isCheckingAuth: true,
+
+  signup: async(email, password, name) => {
+    set({isLoading: true, error: null});
+    try{
+      const response = await axios.post(`${API_URL}/signup`, {email, password, name });
+      set({user: response.data.user, isAuthenticated: true, isLoading:false});
+    }catch(error){
+      set({error: error.response.data.message || "Error sign", isLoading: false});
+      throw error;
+    }
+  },
+}));

@@ -80,3 +80,6 @@ stopped at email verification page
 
 OCT 9TH
 Stopped at 2:45:00 email verification page line 46
+
+OCT 11
+Stopped at 2:52:38

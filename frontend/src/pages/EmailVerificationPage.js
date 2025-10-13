@@ -18,7 +18,7 @@ const EmailVerificationPage = () => {
         // Handle pasted content into value box
         if(value.length > 1){
             const pastedCode = value.slice(0, 6).split("");
-            for(let i = 0; 1 < 6; i++){
+            for(let i = 0; i < 6; i++){
                 newCode[i] = pastedCode[i] || "";
             }
             setCode(newCode);
@@ -47,8 +47,7 @@ const EmailVerificationPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const verficationCode = code.join("");
-        alert(`Verification code submitted: ${verficationCode}`);
-
+        console.log(`Verification code submitted: ${verficationCode}`);
         // try {
         //     await verifyEmail(verficationCode);
         //     navigate("/");
