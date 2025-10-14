@@ -25,8 +25,7 @@ export default function SignupPage() {
     } catch (error) {
       console.log(error);
     }
-
-  }
+  };
   return (
     <div className='min-h-screen bg-gradient-to-br 
      from-gray-900 via-green-900 to-emerald-900 flex items-center justify-center relative overflow-hidden'
