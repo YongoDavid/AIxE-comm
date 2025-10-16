@@ -89,3 +89,7 @@ Stopped at 2:59:40
 
 OCT 14
 Stopped at 3:08:24 App.js
+
+OCT 15
+There is an error at 3:14:30 when a wrong password put as input, an error is thrown(resolved)
+stopped at 3:17:20
