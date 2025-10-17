@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { ShoppingCart, Search, Heart,  Menu, X, ChevronRight, Filter, User, Phone, Mail, Facebook, Twitter, Instagram, Truck,} from 'lucide-react';
+import {useAuthStore} from "../store/authStore"
 export default function Header(props) {
     const categories = props.categories;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
     const [wishlistItems, setWishlistItems] = useState([]);
+    const {user} = useAuthStore();
   return (
     <div>
         <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
@@ -66,7 +68,7 @@ export default function Header(props) {
                     <div className="flex items-center gap-1 md:gap-4">
                         <button className="hidden md:flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors">
                         <User size={20} />
-                        <span className="hidden lg:block">Account</span>
+                        <span className="hidden lg:block" >{user.name} </span>
                         </button>
                         <button 
                         onClick={() => {}}
@@ -184,7 +186,7 @@ export default function Header(props) {
                             <div className="border-t pt-4">
                                 <button className="flex items-center gap-2 p-3 w-full text-left hover:bg-gray-50 rounded-lg">
                                 <User size={18} />
-                                My Account
+                                 {user.name}
                                 </button>
                                 <div className="flex items-center justify-between p-3 text-sm text-gray-600">
                                     <span>24/7 Support</span>
