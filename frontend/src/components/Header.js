@@ -1,12 +1,18 @@
 import { useState } from 'react';
-import { ShoppingCart, Search, Heart,  Menu, X, ChevronRight, Filter, User, Phone, Mail, Facebook, Twitter, Instagram, Truck,} from 'lucide-react';
-import {useAuthStore} from "../store/authStore"
+import { ShoppingCart, Search, Heart,  Menu, X, ChevronRight, Filter, User, Phone, Mail, LogOut, Settings, Facebook, Twitter, Instagram, Truck,} from 'lucide-react';
+import {useAuthStore} from "../store/authStore";
+import { motion } from 'framer-motion';
 export default function Header(props) {
     const categories = props.categories;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
     const [wishlistItems, setWishlistItems] = useState([]);
-    const {user} = useAuthStore();
+    const [accountOpen, setAccountOpen] = useState(false)
+    const {user, logout} = useAuthStore();
+
+    const handleLogout = () => {
+        logout()
+    }
   return (
     <div>
         <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
@@ -66,21 +72,73 @@ export default function Header(props) {
 
                     {/* Action Buttons */}
                     <div className="flex items-center gap-1 md:gap-4">
-                        <button className="hidden md:flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                        <User size={20} />
-                        <span className="hidden lg:block" >{user.name} </span>
-                        </button>
+                        <div className="flex-col relative">
+                            <button
+                                onClick={() => setAccountOpen(!accountOpen)}
+                                className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                aria-expanded={accountOpen}
+                            >
+                                <User size={20} />
+                                <span className="hidden lg:block">{user.name ? user.name : "Account"}</span>
+                            </button>
+
+                            {accountOpen && (
+                                <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.2 }}
+                                className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+                                >
+                                <div className="py-2">
+                                    {/* Profile Menu Item */}
+                                    <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center gap-2"
+                                    >
+                                    <User size={16} />
+                                    <span>My Profile</span>
+                                    </motion.button>
+
+                                    {/* Settings Menu Item */}
+                                    <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center gap-2"
+                                    >
+                                    <Settings size={16} />
+                                    <span>Settings</span>
+                                    </motion.button>
+                                    {/* Divider */}
+                                    <div className="my-2 border-t border-gray-200"></div>
+
+                                    {/* Logout Menu Item */}
+                                    <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={handleLogout}
+                                    className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 transition-colors flex items-center gap-2"
+                                    >
+                                    <LogOut size={16} />
+                                    <span>Logout</span>
+                                    </motion.button>
+                                </div>
+                                </motion.div>
+                            )}
+                        </div>
+                        
                         <button 
-                        onClick={() => {}}
-                        className="relative flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                        <Heart size={18} md={20} />
-                        <span className="hidden lg:block">Wishlist</span>
-                        {wishlistItems.length > 0 && (
-                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 md:h-5 md:w-5 flex items-center justify-center text-xs">
-                            {wishlistItems.length}
-                            </span>
-                        )}
+                            onClick={() => {}}
+                            className="relative flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                            >
+                            <Heart size={18} md={20} />
+                            <span className="hidden lg:block">Wishlist</span>
+                            {wishlistItems.length > 0 && (
+                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 md:h-5 md:w-5 flex items-center justify-center text-xs">
+                                {wishlistItems.length}
+                                </span>
+                            )}
                         </button>
                         <button 
                         onClick={() => {}}
@@ -100,6 +158,7 @@ export default function Header(props) {
                         >
                         {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
                         </button>
+                    
                     </div>
                 </div>
 
@@ -186,7 +245,7 @@ export default function Header(props) {
                             <div className="border-t pt-4">
                                 <button className="flex items-center gap-2 p-3 w-full text-left hover:bg-gray-50 rounded-lg">
                                 <User size={18} />
-                                 {user.name}
+                                 {user.name ? user.name : "Account"}
                                 </button>
                                 <div className="flex items-center justify-between p-3 text-sm text-gray-600">
                                     <span>24/7 Support</span>
@@ -203,4 +262,4 @@ export default function Header(props) {
         </header>
     </div>
   )
-}
+};
