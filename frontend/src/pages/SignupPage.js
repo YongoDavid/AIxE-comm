@@ -33,8 +33,7 @@ export default function SignupPage() {
       <FloatingShape color='bg-green-500' size='w-64 h-64' top='-5%' left='10%' deply={0} />
       <FloatingShape color='bg-emerald-500' size='w-48 h-48' top='70%' left='80%' deply={5} />
       <FloatingShape color='bg-line-500' size='w-32 h-32' top='40' left='-10%' deply={2} />
-
-
+      
       <motion.div
         initial={{ opacity: 0, y:20 }}
         animate={{ opacity: 1, y:0 }}

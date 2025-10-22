@@ -3,6 +3,8 @@ import Home from './pages/Home.js';
 import LoginPage from './pages/LoginPage.js';
 import SignupPage from './pages/SignupPage.js';
 import EmailVerificationPage from './pages/EmailVerificationPage.js';
+import ForgotPasswordPage from './pages/ForgotPasswordPage.js';
+import ResetPasswordPage from './pages/ResetPasswordPage.js';
 
 import LoadingSpinner from './components/LoadingSpinner.js';
 
@@ -37,7 +39,7 @@ const RedirectAuthenticatedUser = ({children}) => {
 
 const App = () => {
 
-  const {isCheckingAuth, checkAuth, isAuthenticated, user} = useAuthStore();
+  const {isCheckingAuth, checkAuth} = useAuthStore();
   
   useEffect(()=>{
     checkAuth();
@@ -63,6 +65,17 @@ const App = () => {
             </RedirectAuthenticatedUser>
             }/>
           <Route path='/verify-email' element={<EmailVerificationPage/>}/>
+          <Route path='/forgot-password' element={<RedirectAuthenticatedUser>
+            <ForgotPasswordPage/>
+          </RedirectAuthenticatedUser>}/>
+          <Route
+            path='/reset-password/:token'
+            element={
+              <RedirectAuthenticatedUser>
+                <ResetPasswordPage/>
+              </RedirectAuthenticatedUser>
+            }
+            />
         </Routes>
         <Toaster/>
       </div>

@@ -96,4 +96,15 @@ stopped at 3:17:20
 
 
 OCT 19
-Profile dropdown done, remaining the logout logic 
+Profile dropdown done, remaining the logout logic.
+
+OCT 20
+stopped at 3:45:27
+Still having issues with the reset password logic.
+the double slash route issue has been solved, now i am trying to set a new password but i am getting the error below :
+ResetPasswordPage.js:32 TypeError: Cannot read properties of undefined (reading 'data')
+    at resetPassword (authStore.js:100:1)
+    at async handleSubmit (ResetPasswordPage.js:25:1)
+
+OCT 22
+Password resset now working propperly.

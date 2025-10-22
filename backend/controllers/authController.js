@@ -127,11 +127,13 @@ export const forgotPassword = async (req,res) => {
         const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
 
         user.resetPasswordToken = resetToken;
-        user.resetTokenExpiresAt = resetTokenExpiresAt;
+        user.resetPasswordExpiresAt = resetTokenExpiresAt;
 
         await user.save();
         // send email 
-        await sendPasswordResetEmail(user.email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`);
+        // await sendPasswordResetEmail(user.email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`);
+        const clientBase = (process.env.CLIENT_URL || "").replace(/\/+$/, "");
+        await sendPasswordResetEmail(user.email, `${clientBase}/reset-password/${resetToken}`);
         res.status(200).json({ succes: true, message: "Password reset link sent to your email"})
     } catch (error) {
         res.status(400).json({success: false, message: error.message});
@@ -166,7 +168,7 @@ export const resetPassword = async (req, res) => {
         console.log("Error in resetPassword", error);
         res.status(400).json({success: false, message: error.message});
     }
-}
+};
 
 export const checkAuth = async (req,res) =>{
     try {
@@ -180,4 +182,3 @@ export const checkAuth = async (req,res) =>{
         res.status(400).json({success: false, message: error.message});
     }
 }
-
