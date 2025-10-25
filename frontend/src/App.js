@@ -75,7 +75,8 @@ const App = () => {
                 <ResetPasswordPage/>
               </RedirectAuthenticatedUser>
             }
-            />
+           />
+          <Route path='*' element={<Navigate to='/' />} />
         </Routes>
         <Toaster/>
       </div>

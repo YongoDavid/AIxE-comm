@@ -108,3 +108,6 @@ ResetPasswordPage.js:32 TypeError: Cannot read properties of undefined (reading 
 
 OCT 22
 Password resset now working propperly.
+
+OCT 23
+Retesting
